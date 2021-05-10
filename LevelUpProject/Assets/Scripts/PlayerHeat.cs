@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayerHeat : MonoBehaviour
 {
@@ -15,11 +16,13 @@ public class PlayerHeat : MonoBehaviour
 
     public Gradient gradient;
 
+    public List<BranchHeat> branchHeats;
+
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        branchHeats = new List<BranchHeat>();
     }
 
     // Update is called once per frame
@@ -40,11 +43,42 @@ public class PlayerHeat : MonoBehaviour
         else
             bodyHeatChange -= bodyHeatLossDay;
 
+        //now factor in branch heat
+        foreach (BranchHeat bH in branchHeats)
+        {
+            bodyHeatChange += bH.heatGiven;
+        }
+
 
         //finally change body heat by body heat change
         bodyHeat += bodyHeatChange * Time.deltaTime;
-        bodyHeatText.text = "Body Heat: ";
-        bodyHeatText.text += (int)bodyHeat + "/100";
+        if (bodyHeat >= 100)
+            bodyHeat = 100;
 
+        bodyHeatText.text = "";
+        bodyHeatText.text += (int)bodyHeat;
+        bodyHeatText.color = gradient.Evaluate(bodyHeat / 100);
+
+        //end game if player dies
+        if (bodyHeat <= 0)
+        {
+            SceneManager.LoadScene(2);
+        }
+
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "HeatCollider")
+        {
+            branchHeats.Add(other.gameObject.GetComponent<BranchHeat>());
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.tag == "HeatCollider")
+        {
+            branchHeats.Remove(other.gameObject.GetComponent<BranchHeat>());
+        }
     }
 }

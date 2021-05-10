@@ -56,6 +56,12 @@ public class BranchBehavior : MonoBehaviour
             if (transform.localScale.x < minXScale)
             {
                 Destroy(fireParticleGameobject);
+
+                BranchHeat bH = GetComponentInChildren<BranchHeat>();
+                PlayerHeat pH = FindObjectOfType<PlayerHeat>();
+                if (pH.branchHeats.Contains(bH))
+                    pH.branchHeats.Remove(bH);
+
                 Destroy(gameObject);
             }
         }

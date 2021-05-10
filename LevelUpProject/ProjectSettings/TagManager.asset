@@ -8,6 +8,8 @@ TagManager:
   - Branch
   - Tree
   - Lighter
+  - BranchMeshObj
+  - HeatCollider
   layers:
   - Default
   - TransparentFX
