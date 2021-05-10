@@ -18,6 +18,10 @@ public class PlayerInventory : MonoBehaviour
     int numberBranches = 0;
     AudioSource audioSource;
 
+    public GameObject lighter;
+    public Animator lightAnimator;
+    bool hasAxeAndLighter = false;
+
     //For throwing sticks
     public GameObject branch;
 
@@ -32,6 +36,24 @@ public class PlayerInventory : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (hasAxeAndLighter == true)
+        {
+            //switch inventory
+            if (Input.GetKeyDown(KeyCode.Alpha1)) //player switching to axe
+            {
+                axe.SetActive(true);
+                lighter.SetActive(false);
+                currentInventorySlot = 1;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha2)) // player switching to lighter
+            {
+                axe.SetActive(false);
+                lighter.SetActive(true);
+                currentInventorySlot = 2;
+            }
+        }
+
+        //pck up ax and lighter
         if (inRangeOfAxeAndLighter == true && Input.GetKeyDown(KeyCode.E))
         {
             inRangeOfAxeAndLighter = false;
@@ -40,6 +62,7 @@ public class PlayerInventory : MonoBehaviour
             axeLighterPickup.SetActive(false);
             pickUpText.SetActive(false);
             inventoryUI.SetActive(true);
+            hasAxeAndLighter = true;
         }
 
         //trigger axe swing animation
@@ -47,6 +70,16 @@ public class PlayerInventory : MonoBehaviour
         {
             //Debug.Log("Axe Swing");
             axeAnimator.SetTrigger("playerChops");
+        }
+
+        //trigger lighter light
+        if (currentInventorySlot == 2 && Input.GetMouseButton(0))
+        {
+            lightAnimator.SetBool("isHoldingMouseDown", true);
+        }
+        else
+        {
+            lightAnimator.SetBool("isHoldingMouseDown", false);
         }
 
         //only show pick up branch text if char over a branch
