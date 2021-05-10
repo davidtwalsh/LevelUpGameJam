@@ -77,9 +77,20 @@ public class PlayerInventory : MonoBehaviour
         {
             lightAnimator.SetBool("isHoldingMouseDown", true);
         }
-        else
+        else if (currentInventorySlot == 2)
         {
             lightAnimator.SetBool("isHoldingMouseDown", false);
+        }
+
+        //remove branches that are lit
+        if (branches.Count > 0)
+        {
+            for (int i = 0; i < branches.Count; i++)
+            {
+                BranchBehavior bb = branches[i].transform.parent.gameObject.GetComponent<BranchBehavior>();
+                if (bb.isLit == true)
+                    branches.Remove(branches[i]);
+            }
         }
 
         //only show pick up branch text if char over a branch
@@ -119,7 +130,9 @@ public class PlayerInventory : MonoBehaviour
         }
         else if (other.gameObject.tag == "Branch")
         {
-            branches.Add(other.gameObject);
+            BranchBehavior bb = other.gameObject.transform.parent.gameObject.GetComponent<BranchBehavior>();
+            if (bb.isLit == false)
+                branches.Add(other.gameObject);
         }
     }
     private void OnTriggerExit(Collider other)
@@ -131,7 +144,9 @@ public class PlayerInventory : MonoBehaviour
         }
         else if (other.gameObject.tag == "Branch")
         {
-            branches.Remove(other.gameObject);
+            BranchBehavior bb = other.gameObject.transform.parent.gameObject.GetComponent<BranchBehavior>();
+            if (bb.isLit == false)
+                branches.Remove(other.gameObject);
         }
     }
 }

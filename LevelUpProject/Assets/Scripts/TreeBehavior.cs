@@ -10,11 +10,12 @@ public class TreeBehavior : MonoBehaviour
     public Transform[] branchSpawnPoints;
     public GameObject branch;
     public GameObject fallSoundObj;
+    Animator animator;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -39,6 +40,7 @@ public class TreeBehavior : MonoBehaviour
         }
         else
         {
+            animator.SetTrigger("hitTree");
             audioSource.Play();
         }
     }

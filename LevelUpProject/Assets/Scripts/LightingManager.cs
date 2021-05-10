@@ -7,8 +7,9 @@ public class LightingManager : MonoBehaviour
     [SerializeField] private Light DirectionalLight;
     [SerializeField] private LightingPreset Preset;
     //Variables
-    [SerializeField, Range(0, 24)] private float TimeOfDay;
+    [SerializeField, Range(0, 24)] public float TimeOfDay;
     public float timeChangeFactor;
+    //timeChangeFactor 0.05 for 4 min days
 
 
     private void Update()
