@@ -10,6 +10,7 @@ TagManager:
   - Lighter
   - BranchMeshObj
   - HeatCollider
+  - water
   layers:
   - Default
   - TransparentFX

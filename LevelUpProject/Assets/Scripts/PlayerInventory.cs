@@ -25,6 +25,10 @@ public class PlayerInventory : MonoBehaviour
     //For throwing sticks
     public GameObject branch;
 
+    //FOR throw stick dialogue
+    public GameObject throwStickHelp;
+    bool hasPickedUpStick = false;
+
 
     // Start is called before the first frame update
     void Start()
@@ -104,6 +108,12 @@ public class PlayerInventory : MonoBehaviour
                 Destroy(br.transform.parent.gameObject);
                 numberBranches += 1;
                 audioSource.Play();
+                
+                if (hasPickedUpStick == false)
+                {
+                    hasPickedUpStick = true;
+                    throwStickHelp.SetActive(true);
+                }
             }
         }
         else

@@ -239,7 +239,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isLit: 0
   fireParticleGameobject: {fileID: 7196035526338033692}
-  shrinkFactor: 0.05
+  shrinkFactor: 0.08
   minXScale: 0.8
   fireLight: {fileID: 4939710220522640109}
 --- !u!1 &4939710220522640109

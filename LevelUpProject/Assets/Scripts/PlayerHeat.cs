@@ -12,12 +12,28 @@ public class PlayerHeat : MonoBehaviour
     bool isNight;
     public float bodyHeatLossNight;
     public float bodyHeatLossDay;
+    public float waterHeatLoss;
     public Text bodyHeatText;
 
     public Gradient gradient;
 
     public List<BranchHeat> branchHeats;
 
+    bool isTouchingWater = false;
+
+    //for fire sound
+    public AudioSource fireSound;
+
+    //for displaying temp warning
+    public GameObject tempWarning;
+
+    //night warning
+    public GameObject nightWarning;
+    bool hasShownNightWarning = false;
+
+    public GameObject boat;
+    bool boatActivated = false;
+    float winTimer = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -30,10 +46,25 @@ public class PlayerHeat : MonoBehaviour
     {
         timeOfDay = lightingManager.TimeOfDay;
 
-        if (timeOfDay < 5.4f || timeOfDay > 21f)
+        if (timeOfDay < 5.4f || timeOfDay > 18f)
             isNight = true;
         else
             isNight = false;
+
+        if (timeOfDay > 6 && timeOfDay < 6.5 && boatActivated == false)
+        {
+            boat.SetActive(true);
+            boatActivated = true;
+        }
+        if (boatActivated == true)
+        {
+            winTimer += Time.deltaTime;
+            if (winTimer >= 5)
+            {
+                SceneManager.LoadScene(3);
+            }
+
+        }
 
         //now calc final body heat change
         //FOR day-nightchange
@@ -43,11 +74,30 @@ public class PlayerHeat : MonoBehaviour
         else
             bodyHeatChange -= bodyHeatLossDay;
 
+        float bHGiven = 0;
         //now factor in branch heat
         foreach (BranchHeat bH in branchHeats)
         {
+            bHGiven += bH.heatGiven;
             bodyHeatChange += bH.heatGiven;
         }
+
+        //for fire audio
+        if (bHGiven > 0)
+        {
+            if (fireSound.isPlaying == false)
+                fireSound.Play();
+        }
+        else
+        {
+            if (fireSound.isPlaying == true)
+                fireSound.Stop();
+        }
+
+
+        //water body heatCange
+        if (isTouchingWater == true)
+            bodyHeatChange -= waterHeatLoss;
 
 
         //finally change body heat by body heat change
@@ -65,6 +115,20 @@ public class PlayerHeat : MonoBehaviour
             SceneManager.LoadScene(2);
         }
 
+        //display temp warning
+        if (isTouchingWater == true || bodyHeat <= 30)
+        {
+            tempWarning.SetActive(true);
+        }
+        else
+            tempWarning.SetActive(false);
+
+        //nightWarning
+        if (hasShownNightWarning == false && isNight == true)
+        {
+            nightWarning.SetActive(true);
+            hasShownNightWarning = true;
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -73,6 +137,11 @@ public class PlayerHeat : MonoBehaviour
         {
             branchHeats.Add(other.gameObject.GetComponent<BranchHeat>());
         }
+
+        if (other.gameObject.tag == "water")
+        {
+            isTouchingWater = true;
+        }
     }
     private void OnTriggerExit(Collider other)
     {
@@ -80,5 +149,9 @@ public class PlayerHeat : MonoBehaviour
         {
             branchHeats.Remove(other.gameObject.GetComponent<BranchHeat>());
         }
+        if (other.gameObject.tag == "water")
+            isTouchingWater = false;
     }
+
+
 }
